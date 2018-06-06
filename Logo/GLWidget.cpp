@@ -54,7 +54,6 @@ void GLWidget::setXRotation(int angle)
 	if (angleAdaptat != intLlumX) {
 		intLlumX = angleAdaptat;
 		emit xRotationChanged(angle);
-		update();
 	}
 }
 
@@ -65,7 +64,6 @@ void GLWidget::setYRotation(int angle)
 	if (angleAdaptat != intLlumY) {
 		intLlumY = angleAdaptat;
 		emit yRotationChanged(angle);
-		update();
 	}
 }
 
@@ -76,7 +74,6 @@ void GLWidget::setZRotation(int angle)
 	if (angleAdaptat != intLlumZ) {
 		intLlumZ = angleAdaptat;
 		emit zRotationChanged(angle);
-		update();
 	}
 }
 

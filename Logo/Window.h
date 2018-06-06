@@ -20,7 +20,6 @@ protected:
 	void keyPressEvent(QKeyEvent *event) override;
 
 private slots:
-	void dockUndock();
 
 private:
 	QSlider * createSlider();

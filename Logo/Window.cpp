@@ -38,7 +38,6 @@ Window::Window(MainWindow *mw)
 	mainLayout->addWidget(w);
 	dockBtn = new QPushButton(tr("Update"), this);
 	connect(dockBtn, &QPushButton::clicked, glWidget, &GLWidget::reloadShaders);
-	//connect(dockBtn, &QPushButton::clicked, this, &Window::dockUndock);
 	mainLayout->addWidget(dockBtn);
 
 	setLayout(mainLayout);
@@ -67,33 +66,4 @@ void Window::keyPressEvent(QKeyEvent *e)
 		close();
 	else
 		QWidget::keyPressEvent(e);
-}
-
-void Window::dockUndock()
-{
-	
-	if (parent()) {
-		setParent(0);
-		setAttribute(Qt::WA_DeleteOnClose);
-		move(QApplication::desktop()->width() / 4 - width() / 4,
-			QApplication::desktop()->height() / 4 - height() / 4);
-		dockBtn->setText(tr("Dock"));
-		show();
-	}
-	else {
-		if (!mainWindow->centralWidget()) {
-			if (mainWindow->isVisible()) {
-				setAttribute(Qt::WA_DeleteOnClose, false);
-				dockBtn->setText(tr("Undock"));
-				mainWindow->setCentralWidget(this);
-			}
-			else {
-				QMessageBox::information(0, tr("Cannot dock"), tr("Main window already closed"));
-			}
-		}
-		else {
-			QMessageBox::information(0, tr("Cannot dock"), tr("Main window already occupied"));
-		}
-	}
-	
 }
