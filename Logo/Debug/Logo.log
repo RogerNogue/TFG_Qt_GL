@@ -1,0 +1,10 @@
+﻿  GLWidget.cpp
+  Logo.cpp
+  main.cpp
+  MainWindow.cpp
+  Window.cpp
+  moc_Window.cpp
+  moc_MainWindow.cpp
+  moc_GLWidget.cpp
+  qrc_Logo.cpp
+  Logo.vcxproj -> C:\Users\Roger\Desktop\Roger\fib\TFG\tutorialQtGL\Logo\TFG_Qt_Gl\Win32\Debug\Logo.exe
