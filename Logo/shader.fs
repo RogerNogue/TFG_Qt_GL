@@ -23,6 +23,10 @@ in highp float intLlumX;
 in highp float intLlumY;
 in highp float intLlumZ;
 
+in float reflexionsBool;
+in float ombresSuausBool;
+in float ambientOcclusionBool;
+
 out highp vec4 FragColor;
 
 //variables per l algorisme
@@ -68,6 +72,7 @@ float distIniciCalculOmbresSuaus = 0.5;
 //booleans per a probar cadascuna de les implementacions
 bool reflexio = true;
 bool ombresSuaus = true;
+bool ambientOcclusion = true;
 
 int outputPassos = 0;
 int passosAlgorisme = 0;
@@ -297,9 +302,9 @@ vec2 objectesEscena(vec3 punt){
 	//return opUnion(udBox(punt, translation(0,4,0), vec3(3,8,3), 10.), udBox(punt, translation(0,0,-5), vec3(30, 0.01, 30), 10));
 	//return opUnion(udBox(punt, translation(0,8,0), vec3(3,8,3), 10.), udBox(punt, translation(0,0,-5), vec3(30, 0.01, 30), 10));
 	//escena moviment
-	//return opUnion(sdSphere(punt, 4, translation(2*sin(time),3,-5), 3), udBox(punt, translation(0,-1,-5), vec3(10, 0.01, 10), 10));
+	return opUnion(sdSphere(punt, 4, translation(2*sin(time),3,-5), 3), udBox(punt, translation(0,-1,-5), vec3(10, 0.01, 10), 10));
 	//escena amb totes les figures
-	
+	/*
 	return 
 			opUnion(
 			opUnion(
@@ -308,7 +313,7 @@ vec2 objectesEscena(vec3 punt){
 			opUnion(
 			opUnion( opUnion(sdSphere(punt, 1, translation(5,0,0), 7.), udBox(punt, translation(0,0,0), vec3(1,1,1), 8.)), udBox(punt, translation(0,-1,-5), vec3(10, 0.01, 10), 10)), sdTorus(punt, translation(-5,-0.5,0), 1)),  opIntersection(sdCylinder(punt, translation(4.5,-1, -8), 3), udBox(punt, translation(5,0,-8),vec3(2,2,2), 3)))
 						,sdCappedCylinder(punt, vec2(1, 1), translation(-5,0,-4), 4)), opIntersection(sdCone(punt, translation(0,0,-5)*rotation(0,90), 5), udBox(punt, translation(0,0,-5),vec3(2,2,2), 5.))), opSubstraction(udBox(punt, translation(5,0,-4), vec3(1, 1, 1), 6), sdSphere(punt, 1.5, translation(5,0,-4), 6))) ;
-	
+	*/
 	//escena reflexions
 	//return opUnion(sdSphere(punt, 4, translation(sin(time),3,-5), 1), udBox(punt, translation(0,-1,-5), vec3(10, 0.01, 10), 10));
 	/*
@@ -601,6 +606,10 @@ vec3 colorObjecteReflexio(vec3 puntcolisio, vec3 obs){
 
 void main()
 {
+	if(reflexionsBool == 0) reflexio = false;
+	if(ombresSuausBool == 0) ombresSuaus = false;
+	if(ambientOcclusionBool == 0) ambientOcclusion = false;
+	
 	//declaracio vars
 	vec3 yobs, xobs, zobs, v, aux, vrpObs;
 	vec3 vObs = vec3(oBSx, oBSy, oBSz);
@@ -631,7 +640,7 @@ void main()
 	//calcul obscurancia (ambient oclusion)
 	vec3 normal = estimacioNormal(puntcolisio);
 	vec3 pAux = puntcolisio + epsilonOcclusion*normal;
-	obscurancia = (epsilonOcclusion-objectesEscena(pAux).x)/epsilonOcclusion;
+	if(ambientOcclusion) obscurancia = (epsilonOcclusion-objectesEscena(pAux).x)/epsilonOcclusion;
 	//obscurancia = 0.0;
 
 	//calcul color
@@ -692,6 +701,7 @@ void main()
 			FragColor = vec4(puntcolisio.y/25, puntcolisio.y/12, 1, 1.0);
 		}
 	}
-	//FragColor = vec4(intLlumX,intLlumY,intLlumZ, 1.0);
+	//FragColor = vec4(reflexionsBool,ombresSuausBool,ambientOcclusionBool, 1.0);
+	//FragColor = vec4(reflexionsBool,0,0, 1.0);
 	
 }

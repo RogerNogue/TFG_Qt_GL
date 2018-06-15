@@ -20,6 +20,11 @@ out float intLlumX;
 out float intLlumY;
 out float intLlumZ;
 
+out float reflexionsBool;
+out float ombresSuausBool;
+out float ambientOcclusionBool;
+
+
 uniform float oBSxu;
 uniform float oBSyu;
 uniform float oBSzu;
@@ -39,6 +44,10 @@ uniform float timeu;
 uniform float intLlumXu;
 uniform float intLlumYu;
 uniform float intLlumZu;
+
+uniform float reflexionsu;
+uniform float ombresSuausu;
+uniform float ambientOcclusionu;
 
 void main()
 {
@@ -65,6 +74,10 @@ void main()
 	intLlumX = intLlumXu;
 	intLlumY = intLlumYu;
 	intLlumZ = intLlumZu;
-
+	
+	reflexionsBool = reflexionsu;
+	ombresSuausBool = ombresSuausu;
+	ambientOcclusionBool = ambientOcclusionu;
+	
     gl_Position = vec4(vertex.x, vertex.y, vertex.z, 1.0);
 }

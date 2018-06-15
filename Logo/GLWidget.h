@@ -9,6 +9,7 @@
 #include "logo.h"
 #include <iostream>
 #include <stdio.h>
+#include <QTimer>
 
 using namespace std;
 
@@ -29,20 +30,7 @@ public:
 	QSize sizeHint() const override;
 
 	//funcions codi meu
-	
-	void RenderSceneCB();
-	void CreateVertexBuffer();
-	
-	void AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType);
 
-	//void cameraDeclaration();
-	void uniformDeclaration(GLuint ShaderProgram);
-	void CompileShaders();
-	void processKeys(unsigned char key, int x, int y);
-	void updateWindowValues(int width, int height);
-	void idle();
-	void InitializeGlutCallbacks();
-	bool llegeixArxiu(const char* pFileName, string& outFile);
 	
 
 
@@ -50,8 +38,13 @@ public slots:
 	void setXRotation(int angle);
 	void setYRotation(int angle);
 	void setZRotation(int angle);
+	void reflectionsToggled(int state);
+	void softShadowsToggled(int state);
+	void ambientOcclusionToggled(int state);
 	void cleanup();
 	void reloadShaders();
+	void toggleAutoTimerUpdate(int state);
+	void updateTime();
 
 signals:
 	void xRotationChanged(int angle);
@@ -93,7 +86,7 @@ private:
 	const char* pFSFileName = "shader.fs";
 	
 	//uniforms fragment shader
-	const float oBSx = 20;
+	float oBSx = 20;
 	const float oBSy = 15;
 	const float oBSz = 25;
 	const QVector3D vObs = QVector3D(oBSx, oBSy, oBSz);
@@ -109,12 +102,16 @@ private:
 	const float aspect = 1.;
 	const float zNear = 0.1;
 	const float zFar = 100;
-	float widthPixels = 400;
-	float heightPixels = 400;
 	float currentTime = 0;							
 	float intLlumX = 0.5;
 	float intLlumY = 0.5;
 	float intLlumZ = 0.5;
+	float reflexions = 1;
+	float ombresSuaus = 1;
+	float ambientOcclusion = 1;
+	QTimer *timer = new QTimer(this);
+	int pastTime;
+	
 };
 
 #endif

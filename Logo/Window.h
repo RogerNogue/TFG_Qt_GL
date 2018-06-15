@@ -2,9 +2,12 @@
 #define WINDOW_H
 
 #include <QWidget>
+#include <QtWidgets>
 
 class QSlider;
 class QPushButton;
+class QLabel;
+class QCheckBox;
 
 class GLWidget;
 class MainWindow;
@@ -22,9 +25,16 @@ protected:
 private slots:
 
 private:
-	QSlider * createSlider();
-
+	QSlider *createSlider();
+	QLabel *createLabel(QString nom);
+	QCheckBox *reflections;
+	QCheckBox *softShadows;
+	QCheckBox *ambientOcclusion;
+	QCheckBox *tempsReal;
 	GLWidget *glWidget;
+	QLabel *etiq1;
+	QLabel *etiq2;
+	QLabel *etiq3;
 	QSlider *xSlider;
 	QSlider *ySlider;
 	QSlider *zSlider;

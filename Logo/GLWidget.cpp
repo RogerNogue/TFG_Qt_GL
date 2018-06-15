@@ -31,7 +31,7 @@ GLWidget::~GLWidget()
 
 QSize GLWidget::minimumSizeHint() const
 {
-	return QSize(50, 50);
+	return QSize(800, 800);
 }
 
 QSize GLWidget::sizeHint() const
@@ -39,6 +39,36 @@ QSize GLWidget::sizeHint() const
 	return QSize(800, 800);
 }
 
+
+void GLWidget::reflectionsToggled(int state) {
+	if (state == 0) {
+		reflexions = 0;
+	}
+	else {
+		reflexions = 1;
+	}
+	reloadShaders();
+}
+
+void GLWidget::softShadowsToggled(int state) {
+	if (state == 0) {
+		ombresSuaus = 0;
+	}
+	else {
+		ombresSuaus = 1;
+	}
+	reloadShaders();
+}
+
+void GLWidget::ambientOcclusionToggled(int state) {
+	if (state == 0) {
+		ambientOcclusion = 0;
+	}
+	else {
+		ambientOcclusion = 1;
+	}
+	reloadShaders();
+}
 static void qNormalizeAngle(int &angle)
 {
 	while (angle < 0)
@@ -51,34 +81,62 @@ void GLWidget::setXRotation(int angle)
 {
 	qNormalizeAngle(angle);
 	float angleAdaptat = (float)angle / 100;
+	//bool actualitzo = false;
+	//if (abs(angleAdaptat - intLlumX) > 0.1) actualitzo = true;
 	if (angleAdaptat != intLlumX) {
 		intLlumX = angleAdaptat;
 		emit xRotationChanged(angle);
 	}
+	//if (actualitzo) reloadShaders();
 }
 
 void GLWidget::setYRotation(int angle)
 {
 	qNormalizeAngle(angle);
 	float angleAdaptat = (float)angle / 100;
+	//bool actualitzo = false;
+	//if (abs(angleAdaptat - intLlumY) > 0.1) actualitzo = true;
 	if (angleAdaptat != intLlumY) {
 		intLlumY = angleAdaptat;
 		emit yRotationChanged(angle);
 	}
+	//if (actualitzo) reloadShaders();
 }
 
 void GLWidget::setZRotation(int angle)
 {
 	qNormalizeAngle(angle);
 	float angleAdaptat = (float)angle / 100;
+	//bool actualitzo = false;
+	//if (abs(angleAdaptat - intLlumZ) > 0.1) actualitzo = true;
 	if (angleAdaptat != intLlumZ) {
 		intLlumZ = angleAdaptat;
 		emit zRotationChanged(angle);
 	}
+	//if (actualitzo) reloadShaders();
+}
+
+void GLWidget::toggleAutoTimerUpdate(int state) {
+	if (state != 0) {
+		connect(timer, SIGNAL(timeout()), this, SLOT(updateTime()));
+		timer->start(50);
+	}
+	else {
+		timer->stop();
+	}
+	/*
+	timer.start(100);
+	pastTime = timer.elapsed();
+	*/
+}
+
+void GLWidget::updateTime() {
+	currentTime += 0.05;
+	reloadShaders();
 }
 
 void GLWidget::reloadShaders()
-{
+	{
 	
 	m_program->removeAllShaders();
 
@@ -107,12 +165,17 @@ void GLWidget::reloadShaders()
 	m_program->setUniformValue(m_program->uniformLocation("zfaru"), zFar);
 	m_program->setUniformValue(m_program->uniformLocation("widthpixelsu"), (float)sizeHint().width());
 	m_program->setUniformValue(m_program->uniformLocation("heightpixelsu"), (float)sizeHint().height());
+	
 	m_program->setUniformValue(m_program->uniformLocation("timeu"), currentTime);
 
 	m_program->setUniformValue(m_program->uniformLocation("intLlumXu"), intLlumX);
 	m_program->setUniformValue(m_program->uniformLocation("intLlumYu"), intLlumY);
 	m_program->setUniformValue(m_program->uniformLocation("intLlumZu"), intLlumZ);
-
+	
+	m_program->setUniformValue(m_program->uniformLocation("reflexionsu"), reflexions);
+	m_program->setUniformValue(m_program->uniformLocation("ombresSuausu"), ombresSuaus);
+	m_program->setUniformValue(m_program->uniformLocation("ambientOcclusionu"), ambientOcclusion);
+	
 	m_program->release();
 	
 	update();
@@ -220,7 +283,11 @@ void GLWidget::initializeGL()
 	m_program->setUniformValue(m_program->uniformLocation("intLlumXu"), intLlumX);
 	m_program->setUniformValue(m_program->uniformLocation("intLlumYu"), intLlumY);
 	m_program->setUniformValue(m_program->uniformLocation("intLlumZu"), intLlumZ);
-
+	
+	m_program->setUniformValue(m_program->uniformLocation("reflexionsu"), reflexions);
+	m_program->setUniformValue(m_program->uniformLocation("ombresSuausu"), ombresSuaus);
+	m_program->setUniformValue(m_program->uniformLocation("ambientOcclusionu"), ambientOcclusion);
+	
 	m_program->release();
 }
 

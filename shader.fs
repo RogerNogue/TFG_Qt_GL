@@ -1,27 +1,33 @@
 #version 330
+in highp float oBSx;
+in highp float oBSy;
+in highp float oBSz;
 
-//per algun motiu nomes executa si tinc aquestes 2 vars declarades
+in highp float vRPx;
+in highp float vRPy;
+in highp float vRPz;
 
+in highp float uPx;
+in highp float uPy;
+in highp float uPz;
 
-uniform float oBSx;
-uniform float oBSy;
-uniform float oBSz;
+in highp float fovy;
+in highp float aspect;
+in highp float znear;
+in highp float zfar;
+in highp float widthpixels;
+in highp float heightpixels;
+in highp float time;
 
-uniform float vRPx;
-uniform float vRPy;
-uniform float vRPz;
+in highp float intLlumX;
+in highp float intLlumY;
+in highp float intLlumZ;
 
-uniform float uPx;
-uniform float uPy;
-uniform float uPz;
+in int reflexionsBool;
+in int ombresSuausBool;
+in int ambientOcclusionBool;
 
-uniform float fovy;
-uniform float aspect;
-uniform float znear;
-uniform float zfar;
-uniform float widthpixels;
-uniform float heightpixels;
-uniform float time;
+out highp vec4 FragColor;
 
 //variables per l algorisme
 const float MAX_REFLECTION_STEPS = 50;
@@ -38,9 +44,9 @@ mat4 identityTransf =	mat4(vec4(1, 0, 0, 0),vec4(0, 1, 0, 0),vec4(0, 0, 1, 0),ve
 //posicio, intensitat
 vec4 llumsPuntuals[3] = vec4[3](
 	//vec4(15,25,15, 0.2),
-	vec4(15,  8, 15, 0.3),
-	vec4(-10, 8, 5, 0.2),
-	vec4(-10, 7, -12, 0.3) //es bona per a l escena d ombres suaus
+	vec4(15,  8, 15, intLlumX),
+	vec4(-10, 8, 5, intLlumY),
+	vec4(-10, 7, -12, intLlumZ) //es bona per a l escena d ombres suaus
 	);
 
 	//vec4(10,20,5, 0.9)
@@ -57,8 +63,6 @@ float dmin[3] = float[3](
 	MAX_DIST, MAX_DIST, MAX_DIST
 	);
 
-out vec4 FragColor;
-
 float relaxationIndex = 1.9;//pertany a [1, 2)
 
 float obscurancia = 0;
@@ -66,11 +70,21 @@ float epsilonOcclusion = 0.5;
 float distIniciCalculOmbresSuaus = 0.5;
 
 //booleans per a probar cadascuna de les implementacions
+
 bool reflexio = true;
 bool ombresSuaus = true;
+bool ambientOcclusion = true;
+
+//if(reflexionsBool == 0) reflexio = false;
+
+//if(ombresSuausBool == 0) ombresSuaus = false;
+
+//if(ambientOcclusionBool == 0) ambientOcclusion = false;
+
+
 
 int outputPassos = 0;
-int passosAlgorisme = 0;
+int passosAlgorisme = reflexionsBool;
 
 /*
 http://devernay.free.fr/cours/opengl/materials.html
@@ -631,8 +645,8 @@ void main()
 	//calcul obscurancia (ambient oclusion)
 	vec3 normal = estimacioNormal(puntcolisio);
 	vec3 pAux = puntcolisio + epsilonOcclusion*normal;
-	obscurancia = (epsilonOcclusion-objectesEscena(pAux).x)/epsilonOcclusion;
-	//obscurancia = 0.0;
+	if (ambientOcclusion) obscurancia = (epsilonOcclusion-objectesEscena(pAux).x)/epsilonOcclusion;
+	
 
 	//calcul color
 	if(profunditat < MAX_DIST){
@@ -692,6 +706,6 @@ void main()
 			FragColor = vec4(puntcolisio.y/25, puntcolisio.y/12, 1, 1.0);
 		}
 	}
-	//FragColor = vec4(1,1,0, 1.0);
+	//FragColor = vec4(intLlumX,intLlumY,intLlumZ, 1.0);
 	
 }
